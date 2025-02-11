@@ -4,9 +4,16 @@ import subprocess
 import threading
 from pynput import keyboard
 
-WHISPER_PATH = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本目录
-AUDIO_FILE = os.path.join(WHISPER_PATH, "input.wav")  # 录音文件
-FIXED_AUDIO_FILE = os.path.join(WHISPER_PATH, "input_fixed.wav")  # 16kHz 版本
+# 获取当前脚本所在目录
+SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Whisper CLI 的路径（相对于 `whisper-hotkey/`）
+WHISPER_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "../whisper.cpp/build/bin"))
+
+# Whisper CLI 可执行文件
+WHISPER_CLI = os.path.join(WHISPER_PATH, "whisper-cli")
+AUDIO_FILE = os.path.join(SCRIPT_DIR, "input.wav")  # 录音文件
+FIXED_AUDIO_FILE = os.path.join(SCRIPT_DIR, "input_fixed.wav")  # 16kHz 版本
 
 recording_process = None  # 录音进程
 is_recording = False  # 录音状态
@@ -27,6 +34,7 @@ def start_recording():
             stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         print("✅ `ffmpeg` 录音进程已启动")
+        print(f"🛠️ 录音文件路径: {AUDIO_FILE}")
     except Exception as e:
         print(f"❌ 录音启动失败: {e}")
 
@@ -77,20 +85,16 @@ def process_audio():
         print(f"❌ 错误: 16kHz 转换失败，`{FIXED_AUDIO_FILE}` 文件不存在")
         return
 
-    # **自动查找 `whisper-cli` 的路径**
-    possible_paths = [
-        os.path.join(WHISPER_PATH, "bin/whisper-cli"),
-        os.path.join(WHISPER_PATH, "build/bin/whisper-cli"),
-    ]
-    whisper_cli_path = next((p for p in possible_paths if os.path.exists(p)), None)
+    # whisper_cli_path = os.path.join(WHISPER_PATH, "build/bin/whisper-cli")
 
-    if not whisper_cli_path:
-        print(f"❌ 错误: 无法找到 `whisper-cli`，请检查 `bin/` 或 `build/bin/` 目录")
+    if not os.path.exists(WHISPER_CLI):
+        print(f"whisoer cli路径: {WHISPER_CLI}")
+        print(f"❌ 错误: 无法找到 `whisper-cli`，请检查 `whisper.cpp/build/bin/` 目录")
         return
 
-    print(f"🚀 运行 Whisper 语音识别中（使用 {whisper_cli_path}）...")
+    print(f"🚀 运行 Whisper 语音识别中（使用 {WHISPER_CLI}）...")
     result = subprocess.run(
-        [whisper_cli_path, "-m", f"{WHISPER_PATH}/models/ggml-large-v3.bin",
+        [WHISPER_CLI, "-m", os.path.abspath("../whisper.cpp/models/ggml-large-v3.bin"),
          "-f", FIXED_AUDIO_FILE, "--threads", "8", "-l", "auto", "--output-txt"],
         capture_output=True, text=True
     )
