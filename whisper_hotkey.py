@@ -99,12 +99,12 @@ def process_audio():
         capture_output=True, text=True
     )
 
-    transcript = result.stdout.strip()
-    if transcript:
-        pyperclip.copy(transcript)
-        print(f"📋 已复制到剪贴板：{transcript}")
-    else:
-        print("⚠️ Whisper 识别结果为空，请检查录音内容")
+    # 读取 txt 文件内容
+    with open(FIXED_AUDIO_FILE + ".txt", "r") as f:
+        transcript = f.read().strip()
+
+    pyperclip.copy(transcript)
+    print(f"📋 已复制到剪贴板（无时间戳）：{transcript}")
 
     # **自动删除音频**
     try:
