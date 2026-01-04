@@ -1,5 +1,170 @@
 Whisper Hotkey Readme
 
+# Whisper Hotkey
+
+A macOS productivity tool that enables voice-to-text transcription with a global hotkey, automatically copying the transcribed text to your clipboard.
+
+## Features
+
+- 🎤 **Global Hotkey**: Press `Cmd + Shift + R` to start/stop recording
+- 🌍 **Multi-language Support**: Automatic language detection
+- 🔄 **Mixed Language Input**: Handles Chinese-English mixed speech
+- 🧹 **Auto Cleanup**: Automatically removes temporary audio files
+- 🎯 **High Accuracy**: Uses OpenAI's Whisper large model
+- ⚡ **Fast**: Built with Python + ffmpeg + whisper.cpp
+
+## Demo
+
+Press `Cmd + Shift + R` → Speak → Press again → Text appears in clipboard!
+
+## Prerequisites
+
+### 1. Install ffmpeg
+```bash
+brew install ffmpeg
+```
+
+### 2. Build whisper.cpp
+```bash
+git clone https://github.com/ggerganov/whisper.cpp.git
+cd whisper.cpp
+WHISPER_METAL=1 make
+```
+
+### 3. Download Whisper Model
+
+For better accuracy, use the large-v3 model:
+```bash
+cd models
+wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3.bin
+```
+
+### 4. Install Python Dependencies
+```bash
+pip install pynput pyperclip
+```
+
+## macOS Permissions Setup
+
+⚠️ **Important**: macOS requires explicit permissions for keyboard monitoring and microphone access.
+
+### Grant Accessibility Access (for hotkey monitoring)
+
+1. Open `System Settings` → `Privacy & Security` → `Accessibility`
+2. Click the lock icon 🔒 to unlock
+3. Click `+` to add an application
+4. Press `Command + Shift + G` and paste your Python path:
+```bash
+   python3 -c "import sys; print(sys.executable)"
+```
+5. Ensure Python is checked
+
+### Grant Microphone Access
+
+1. Open `System Settings` → `Privacy & Security` → `Microphone`
+2. Add `python3` and ensure it's checked
+
+## Usage
+
+### 1. Update Configuration
+
+Edit `whisper_hotkey.py` and set the correct path to your `whisper-cli`:
+```python
+WHISPER_CLI = "/path/to/whisper.cpp/build/bin/whisper-cli"
+```
+
+### 2. Run the Script
+```bash
+python whisper_hotkey.py
+```
+
+You should see:
+```
+🔥 Press Cmd + Shift + R to start recording, press again to stop
+```
+
+### 3. Record and Transcribe
+
+1. Press `Cmd + Shift + R` to start recording
+2. Speak your message
+3. Press `Cmd + Shift + R` again to stop
+4. Transcribed text is automatically copied to clipboard
+
+### Example Output
+```
+📋 Copied to clipboard: Hello, this is a test of Whisper-Hotkey!
+🗑️ Recording file automatically deleted
+```
+
+## How It Works
+
+1. **Hotkey Detection**: Uses `pynput` to monitor global keyboard shortcuts
+2. **Audio Recording**: Captures audio via `ffmpeg` with WAV format (16kHz mono)
+3. **Transcription**: Processes audio through Whisper large-v3 model using `whisper.cpp`
+4. **Clipboard Integration**: Copies result using `pyperclip`
+5. **Cleanup**: Removes temporary audio files automatically
+
+## Troubleshooting
+
+### "This process is not trusted!" Error
+
+**Cause**: Python doesn't have Accessibility permissions.
+
+**Solution**: Add `python3` in `System Settings` → `Privacy & Security` → `Accessibility`
+
+### ffmpeg Cannot Record Audio
+
+**Cause**: Python doesn't have Microphone permissions.
+
+**Solution**: Add `python3` in `System Settings` → `Privacy & Security` → `Microphone`
+
+### "whisper-cli not found"
+
+**Cause**: Incorrect path to whisper.cpp CLI.
+
+**Solution**: Find the correct path:
+```bash
+find ~/whisper.cpp -name "whisper-cli"
+```
+Update `WHISPER_CLI` in the script with the correct path.
+
+## Technical Stack
+
+- **Python 3.x**: Core application logic
+- **ffmpeg**: Audio recording and processing
+- **whisper.cpp**: Fast CPU/GPU inference for Whisper models
+- **pynput**: Global hotkey monitoring
+- **pyperclip**: Cross-platform clipboard operations
+
+## Why This Project?
+
+I built this tool to improve my productivity during my graduate studies at UC Berkeley. As someone who frequently needs to transcribe ideas, meeting notes, and multilingual content, I wanted a seamless voice-to-text solution that:
+- Works offline (privacy)
+- Supports multiple languages
+- Integrates smoothly into my workflow
+- Requires minimal interaction
+
+## Future Improvements
+
+- [ ] Custom hotkey configuration
+- [ ] Support for other operating systems (Linux, Windows)
+- [ ] GUI for easier setup
+- [ ] Multiple Whisper model options
+- [ ] Audio quality settings
+
+## License
+
+MIT License - feel free to use and modify!
+
+## Contributing
+
+Issues and pull requests are welcome! This was my first attempt at building a system-level productivity tool, and I'm always learning.
+
+---
+
+**Built with ❤️ for productivity**
+
+
 Whisper-Hotkey: 语音输入到剪贴板
 
 # 项目简介
