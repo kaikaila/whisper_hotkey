@@ -146,10 +146,18 @@ I built this tool to improve my productivity during my graduate studies at UC Be
 
 ## Future Improvements
 
+### Productization (one-click install)
+- [ ] `install.sh`: clone & build whisper.cpp (with Metal), download ggml-large-v3.bin model
+- [ ] `install.sh`: create venv, install Python dependencies
+- [ ] `install.sh`: add aliases (`cdvoice`, `runvoice`) and `WHISPER_HOTKEY_LANG` env var to `~/.zshrc`
+- [ ] `install.sh`: prompt user for macOS permissions (Accessibility, Microphone) with guidance
+- [ ] `uninstall.sh`: remove whisper.cpp, venv, aliases, env var cleanly
+
+### Features
 - [ ] Custom hotkey configuration
 - [ ] Support for other operating systems (Linux, Windows)
 - [ ] GUI for easier setup
-- [ ] Multiple Whisper model options
+- [ ] Multiple Whisper model options (large-v3 / large-v3-turbo / medium)
 - [ ] Audio quality settings
 
 ## License
